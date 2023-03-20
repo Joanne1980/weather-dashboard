@@ -1,55 +1,83 @@
-// TODO populate history list from local storage when page loads
+//Assign variables
 
-const history = JSON.parse(localStorage.getItem('history')) || [];
-const apiKey = '11459088e0af686821247c07e336f8b3';
+const searchForm = $("#search-form");
+const searchInput = $("#search-input");
+const historySearch = $("#history");
+const forecastToday = $("#today");
+const forecastSearch = $("#forcast");
 
-// TODO style the current HTML
+//Assign variable for API key
+const apiKey = "11459088e0af686821247c07e336f8b3";
 
-// Add event listener for when search button is clicked
-$('#search-form').on('submit', function(event){
- event.preventDefault();
+// Assign variable for history list
+const history = JSON.parse(localStorage.getItem("history")) || [];
 
- const userInput = $('#search-input').val();
- const queryURL = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput +
-  '&limit=5&appid=' + apiKey;
+loadHistory();
 
-  //Todo prepend the value to the list container
+//JQuery event on submission form
+$("#search-form").on("submit", function (event) {
+  event.preventDefault();
 
-  // Add the history to local storage
-
-  history.push(userInput);
-  localStorage.setItem('history',JSON.stringify(history));
-
-  //Call Geocode API when search form is submitted
-  $.ajax({url: queryURL})
-  .then(function(response) {
-    const lat = response[0].lat;
-    const lon = response[0].lon;
-
-    const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey; 
-  });
-  });
-
-
-  $.ajax({ url: weatherQueryUrl }) 
-
-  .then(function(weatherResponse) { 
-    //Put the response on the HTML page
-    const weatherList = weatherResponse.list;
-    // Now forcast
-    const today = weatherList[0];
-    console.log(today);
-
-    //5 day forcast
-
-    for (let i = 1; i< weatherList.length; i += 8){
-      const weather = weatherList[i];
-      console.log(weather);
-
-      //TODO put 5 day forcats in container for the forcast
+//Button clicked and search done and stored
+  const button = $(this);
+  if (button.attr("data-city")) {
+    showWeather(button.attr("data-city"));
+  } else {
+    const userInput = $("#search-input").val();
+    if (userInput == "") {
+      showPopup("Please enter city name");
+    } else {
+      updateHistory(userInput);
+      showWeather(userInput);
     }
+  }
+})
 
-   
-  })
+// function to show weather results
+function showWeather(userInput) {
+ clear()
 
+})
 
+// // TODO style the current HTML
+
+//
+//  const queryURL = 'http://api.openweathermap.org/geo/1.0/direct?q=' + userInput +
+//   '&limit=5&appid=' + apiKey;
+
+//   //Todo prepend the value to the list container
+
+//   // Add the history to local storage
+
+//   history.push(userInput);
+//   localStorage.setItem('history',JSON.stringify(history));
+
+//   //Call Geocode API when search form is submitted
+//   $.ajax({url: queryURL})
+//   .then(function(response) {
+//     const lat = response[0].lat;
+//     const lon = response[0].lon;
+
+//     const weatherQueryUrl = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey;
+//   });
+//   });
+
+//   $.ajax({ url: weatherQueryUrl })
+
+//   .then(function(weatherResponse) {
+//     //Put the response on the HTML page
+//     const weatherList = weatherResponse.list;
+//     // Now forcast
+//     const today = weatherList[0];
+//     console.log(today);
+
+//     //5 day forcast
+
+//     for (let i = 1; i< weatherList.length; i += 8){
+//       const weather = weatherList[i];
+//       console.log(weather);
+
+//       //TODO put 5 day forcats in container for the forcast
+//     }
+
+//   })
