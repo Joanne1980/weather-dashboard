@@ -6,6 +6,10 @@ const historySearch = $("#history");
 const forecastToday = $("#today");
 const forecastSearch = $("#forcast");
 
+const popup = $('#messageModal')
+const popupTitle = $('#messageModalLabel')
+const popupContent = $('.modal-body')
+
 //Assign variable for API key
 const apiKey = "11459088e0af686821247c07e336f8b3";
 
