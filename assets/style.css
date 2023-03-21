@@ -1,0 +1,42 @@
+/*headers*/
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight:bold
+}
+#forecast h2{
+    font-size:1.5em;
+}
+#forecast h3{
+    font-size:1.2em;
+}
+
+/*buttons*/
+#search-button.btn, btn {
+    border-radius: 5px;
+    width:100%;
+    background-color: #aeaeae;
+}
+
+#search-button.search-button {
+    background-color: #5098e6;
+}
+/*forecast styles*/
+#forecast .container > div > div > div {
+    background-color: #2d3e50;
+    color: #fff;
+}
+ /* todays weather*/
+ #today div {
+    border: 1px solid black;
+ }
+
+ .container-fluid.loader {
+    display: none;
+ }
+
+ @media screen and (max-width:1052px) {
+    .navbar-brand.logo{
+        max-width: 250px;
+    }
+ }
+
