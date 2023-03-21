@@ -96,7 +96,7 @@ function clear() {
   forecastToday.empty();
   $("#forecast .container").remove();
 }
-
+ // todays forecast
 function renderToday(lat, lon) {
   const todayWeatherQueryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
   $.ajax({ url: todayWeatherQueryUrl }).then(function (weatherResponse) {
@@ -109,6 +109,7 @@ function renderToday(lat, lon) {
     const title = $("<h2>").text("${weatherResponse.name} (${date}");
     title.append(iconUrl);
 
+    // weather response
     const text = $("<p>").html(`
   Temp: ${weatherResponse.main.temp} °C<br>
   Wind: ${weatherResponse.wind.speed} KPH<br>
@@ -120,6 +121,7 @@ function renderToday(lat, lon) {
   });
 }
 
+// 5 day forecast
 function processForcast(lat, lon) {
   const weatherQueryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
   $.ajax({ url: weatherQueryUrl }).then(function (weatherResponse) {
