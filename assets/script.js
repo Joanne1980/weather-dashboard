@@ -47,70 +47,98 @@ function showWeather(userInput) {
     apiKey;
 
   //Call Geocode API when search form is submitted
-  $.ajax({ url: queryURL }).then(function (response) { 
+  $.ajax({ url: queryURL }).then(function (response) {
+    $(".container-fluid.loader").hide();
+    if (response.length == 0) {
+      const lat = response[0].lat;
+      const lon = response[0].lon;
 
-    $(".container-fluid.loader").hide()
-    if (response.length ! == 0){
-    
-    const lat = response[0].lat;
-    const lon = response[0].lon;
-
-    renderToday(lat, lon)
-    processForecast(lat, lon)
+      renderToday(lat, lon);
+      processForecast(lat, lon);
     } else {
-      showPopup('${userInput} Please try again')
+      showPopup("${userInput} Please try again");
     }
-  })
+  });
 }
- function updateHistory(userInput) {
-
- //Add the history to local storage
+function updateHistory(userInput) {
+  //Add the history to local storage
   history.push(userInput);
   localStorage.setItem("history", JSON.stringify(history));
 
-  loadHistory()
-
- } 
-
- function loadHistory() {
-
-  historySearch.empty()
- if (JSON.parse(localStorage.getItem('history'))) {
-  JSON.parse(localStorage.getItem('history')).forEach(function(Element) {
- const button = $("<button>").addClass("btn mt-2 button").text(element).attr("data-city"), element)
-  historySearch.prepend(button)
- })
-}
+  loadHistory();
 }
 
+// load history
+function loadHistory() {
+// empty historySearch  
+  historySearch.empty();
+
+  if (JSON.parse(localStorage.getItem("history"))) {
+    JSON.parse(localStorage.getItem("history")).forEach(function (Element) {
+      const button = $("<button>")
+        .addClass("btn mt-2 button")
+        .text(element)
+        .attr("data-city", element);
+      historySearch.prepend(button);
+    });
+  }
+}
+ function showPopup(message) {
+  popupTitle.text("error")
+  popupContent.text(message)
+  popup.modal("show")
+ }
+ function clear() {
+ forecastToday.empty()
+ $("#forecast .container").remove()
+
+ }
+
+ function renderToday(lat, lon) {
  
+ const weatherQueryUrl ="http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
+ $.ajax({ url: weatherQueryUrl })
+ .then(function (weatherResponse) {
+
+  const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
+
+  const div = $("<div>").addClass("p-3")
+
+  const iconUrl = `<img src="https://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
+
+  const title = $("<h2>").text('${weatherResponse.name} (${date}')
+  title.append(iconUrl)
+
+  const text = $("<p>").html(`
+  Temp: ${weatherResponse.main.temp} °C<br>
+  Wind: ${weatherResponse.wind.speed} KPH<br>
+  Humidity: ${weatherResponse.main.humidity}%
+  `)
+ div.append(title).append(text)
+
+ forecastToday.append(div)
+
+  })
+} 
+  
  
 
-  //   const weatherQueryUrl =
-  //     "http://api.openweathermap.org/data/2.5/forecast?lat=" +
-  //     lat +
-  //     "&lon=" +
-  //     lon +
-  //     "&appid=" +
-  //     apiKey;
-  //   }
-  // });
 
-  
-  // $.ajax({ url: weatherQueryUrl })
-  // .then(function (weatherResponse) {
 
-  //   //Put the response on the HTML page
-  //   const weatherList = weatherResponse.list;
 
-  //   // Now forcast
-  //   const today = weatherList[0];
-  //   console.log(today);
-  
+
+
+
+
+
+//   //Put the response on the HTML page
+//   const weatherList = weatherResponse.list;
+
+//   // Now forcast
+//   const today = weatherList[0];
+//   console.log(today);
 
 // // TODO style the current HTML
-
-
 
 //     //5 day forcast
 
