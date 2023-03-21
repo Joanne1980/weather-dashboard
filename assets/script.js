@@ -70,83 +70,111 @@ function updateHistory(userInput) {
 
 // load history
 function loadHistory() {
-// empty historySearch  
+  // empty historySearch
   historySearch.empty();
 
   if (JSON.parse(localStorage.getItem("history"))) {
     JSON.parse(localStorage.getItem("history")).forEach(function (Element) {
       const button = $("<button>")
         .addClass("btn mt-2 button")
-        .text(element)
-        .attr("data-city", element);
+        .text(Element)
+        .attr("data-city", Element);
       historySearch.prepend(button);
     });
   }
 }
- function showPopup(message) {
-  popupTitle.text("error")
-  popupContent.text(message)
-  popup.modal("show")
- }
- function clear() {
- forecastToday.empty()
- $("#forecast .container").remove()
+function showPopup(message) {
+  popupTitle.text("error");
+  popupContent.text(message);
+  popup.modal("show");
+}
+function clear() {
+  forecastToday.empty();
+  $("#forecast .container").remove();
+}
 
- }
+function renderToday(lat, lon) {
+  const todayWeatherQueryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
+  $.ajax({ url: todayWeatherQueryUrl }).then(function (weatherResponse) {
+    const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY");
 
- function renderToday(lat, lon) {
- 
- const weatherQueryUrl ="http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
- $.ajax({ url: weatherQueryUrl })
- .then(function (weatherResponse) {
+    const div = $("<div>").addClass("p-3");
 
-  const date = moment.unix(weatherResponse.dt).format("DD/MM/YYYY")
+    const iconUrl = `<img src="https://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`;
 
-  const div = $("<div>").addClass("p-3")
+    const title = $("<h2>").text("${weatherResponse.name} (${date}");
+    title.append(iconUrl);
 
-  const iconUrl = `<img src="https://openweathermap.org/img/wn/${weatherResponse.weather[0].icon}.png" alt="${weatherResponse.weather[0].description}">`
-
-  const title = $("<h2>").text('${weatherResponse.name} (${date}')
-  title.append(iconUrl)
-
-  const text = $("<p>").html(`
+    const text = $("<p>").html(`
   Temp: ${weatherResponse.main.temp} °C<br>
   Wind: ${weatherResponse.wind.speed} KPH<br>
   Humidity: ${weatherResponse.main.humidity}%
-  `)
- div.append(title).append(text)
+  `);
+    div.append(title).append(text);
 
- forecastToday.append(div)
+    forecastToday.append(div);
+  });
+}
+
+function processForcast(lat, lon) {
+  const weatherQueryUrl = "http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey;
+  $.ajax({ url: weatherQueryUrl }).then(function (weatherResponse) {
+
+    const weatherArray ={}
+
+    const weatherList = weatherResponse.list;
+
+    const todaysDate =moment()
+    for (let i = 1; i< weatherList.length; i += 8){
+       const weather = weatherList[i];
+       console.log(weather);
+
+       const date = moment.unix(forecast.dt).format("DD/MM/YYYY")
+       if (!todaysDate.isSame(moment.unix(forecast.dt), "day")){
+        weatherArray[date] = forecast
+
+       }
+
+    }
+    renderForecast(sortDateArray(object.entries(weatherArray)))
+  });
+}
+
+function renderForecast(forecast) {
+
+  const container =$("<div>").addClass("container")
+  const row = $("<div>").addClass("row rows-col-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5")
+   
+  forecast.forEach(function(Element) {
+
+    const col = $("<div>").addClass("col mb-2")
+    const div = $("<div>").addClass("p-2")
+    const date = element[0]
+    const icon = `<img src="https://openweathermap.org/img/wn/${element[1].weather[0].icon}.png" alt="${element[1].weather[0].description}">`
+    const title = $("<h3>").text('${date}')
+
+    const todayWeather = $("<p>").html(`
+    Temp: ${element[1].main.temp} °C<br>
+    Wind: ${element[1].wind.speed} KPH<br>
+    Humidity: ${element[1].main.humidity}%`)
+
+    div.append(title).append(icon).append(todayWeather)
+
+    col.append(div)
+
+    row.append(col)
 
   })
-} 
-  
- 
+    container.append(row)
 
+    container.prepend("<h2>5 Day Forecast:</h2>")
+    forecast5Days.append(container)
+}
 
+function sortDateArray(weatherArray) {
+  const newArray = weatherArray.sort(function (value1, value2) {
+    return value1[1].dt - value2[1].dt
+  })
+  return newArray
+}
 
-
-
-
-
-
-
-//   //Put the response on the HTML page
-//   const weatherList = weatherResponse.list;
-
-//   // Now forcast
-//   const today = weatherList[0];
-//   console.log(today);
-
-// // TODO style the current HTML
-
-//     //5 day forcast
-
-//     for (let i = 1; i< weatherList.length; i += 8){
-//       const weather = weatherList[i];
-//       console.log(weather);
-
-//       //TODO put 5 day forcats in container for the forcast
-//     }
-
-//   })
